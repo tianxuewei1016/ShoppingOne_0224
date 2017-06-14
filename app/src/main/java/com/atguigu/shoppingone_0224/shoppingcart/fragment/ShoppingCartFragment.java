@@ -6,7 +6,12 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.atguigu.shoppingone_0224.activity.MyApplication;
 import com.atguigu.shoppingone_0224.base.BaseFragment;
+import com.atguigu.shoppingone_0224.home.bean.GoodsBean;
+import com.atguigu.shoppingone_0224.shoppingcart.utils.CartStorage;
+
+import java.util.ArrayList;
 
 /**
  * 作者：田学伟 on 2017/6/11 15:17
@@ -14,7 +19,7 @@ import com.atguigu.shoppingone_0224.base.BaseFragment;
  * 作用：购物车
  */
 
-public class ShoppingCartFragment extends BaseFragment{
+public class ShoppingCartFragment extends BaseFragment {
     private TextView textView;
 
     @Override
@@ -35,5 +40,10 @@ public class ShoppingCartFragment extends BaseFragment{
         super.initData();
         Log.e("TAG", "购物车的数据被初始化了...");
         textView.setText("购物车内容");
+        ArrayList<GoodsBean> allData = CartStorage.getInstance(MyApplication.getContext()).getAllData();
+        for (int i = 0; i < allData.size(); i++) {
+            Log.e("TAG", "" + allData.get(i).toString());
+
+        }
     }
 }
