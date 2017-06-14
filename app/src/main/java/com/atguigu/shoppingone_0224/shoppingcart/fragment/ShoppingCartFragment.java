@@ -30,6 +30,7 @@ import butterknife.OnClick;
  */
 
 public class ShoppingCartFragment extends BaseFragment {
+
     @InjectView(R.id.tv_shopcart_edit)
     TextView tvShopcartEdit;
     @InjectView(R.id.recyclerview)
@@ -57,6 +58,7 @@ public class ShoppingCartFragment extends BaseFragment {
     @InjectView(R.id.ll_empty_shopcart)
     LinearLayout llEmptyShopcart;
     private ArrayList<GoodsBean> datas;
+    private ShoppingCartAdapter adapter;
 
     @Override
     public View initView() {
@@ -78,7 +80,7 @@ public class ShoppingCartFragment extends BaseFragment {
             //有数据-空布局隐藏
             llEmptyShopcart.setVisibility(View.GONE);
             //设置适配器
-            ShoppingCartAdapter adapter = new ShoppingCartAdapter(mContext, datas,checkboxAll,tvShopcartTotal,cbAll);
+            adapter = new ShoppingCartAdapter(mContext, datas, checkboxAll, tvShopcartTotal, cbAll);
             recyclerview.setAdapter(adapter);
             //设置布局管理器
             recyclerview.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
@@ -100,7 +102,12 @@ public class ShoppingCartFragment extends BaseFragment {
                 Toast.makeText(mContext, "编辑", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.checkbox_all:
-                Toast.makeText(mContext, "全选", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "全选", Toast.LENGTH_SHORT).show();
+                boolean checked = checkboxAll.isChecked();
+                //设置是否选择
+                adapter.checkAll_none(checked);
+                //重新计算价格
+                adapter.showTotalPrice();
                 break;
             case R.id.btn_check_out:
                 Toast.makeText(mContext, "去结算", Toast.LENGTH_SHORT).show();

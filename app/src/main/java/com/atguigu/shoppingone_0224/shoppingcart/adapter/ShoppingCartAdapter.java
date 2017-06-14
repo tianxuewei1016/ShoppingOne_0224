@@ -45,7 +45,7 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
     /**
      * 重新显示总价格
      */
-    private void showTotalPrice() {
+    public void showTotalPrice() {
         tvShopcartTotal.setText("合计:" + getTotalPrice());
     }
 
@@ -87,6 +87,20 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         holder.AddSubView.setValue(goodsBean.getNumber());
         holder.AddSubView.setMinValue(1);
         holder.AddSubView.setMaxValue(20);
+    }
+
+    public void checkAll_none(boolean checked) {
+        if(datas!=null&&datas.size()>0) {
+            int number = 0;
+            for (int i=0;i<datas.size();i++){
+                GoodsBean goodsBean = datas.get(i);
+                //只要有一个不选中就设置非全选
+                goodsBean.setChecked(checked);
+                notifyItemChanged(i);
+            }
+        }else{
+            checkboxAll.setChecked(false);
+        }
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
