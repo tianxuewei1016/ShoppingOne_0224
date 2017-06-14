@@ -27,11 +27,38 @@ import butterknife.InjectView;
 public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapter.MyViewHolder> {
     private final Context mContext;
     private final ArrayList<GoodsBean> datas;
+    private final CheckBox checkboxAll;
+    private final TextView tvShopcartTotal;
+    private final CheckBox cbAll;
 
 
-    public ShoppingCartAdapter(Context mContext, ArrayList<GoodsBean> datas) {
+    public ShoppingCartAdapter(Context mContext, ArrayList<GoodsBean> datas, CheckBox checkboxAll, TextView tvShopcartTotal, CheckBox cbAll) {
         this.mContext = mContext;
         this.datas = datas;
+        this.checkboxAll = checkboxAll;
+        this.tvShopcartTotal = tvShopcartTotal;
+        this.cbAll = cbAll;
+        showTotalPrice();
+    }
+
+    /**
+     * 重新显示总价格
+     */
+    private void showTotalPrice() {
+        tvShopcartTotal.setText("合计:" + getTotalPrice());
+    }
+
+    private double getTotalPrice() {
+        double result = 0;
+        if (datas != null && datas.size() > 0) {
+            for (int i = 0; i < datas.size(); i++) {
+                GoodsBean goodsBean = datas.get(i);
+                if (goodsBean.isChecked()) {
+                    result = result + goodsBean.getNumber() * Double.parseDouble(goodsBean.getCover_price());
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -85,6 +112,9 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
 
                     //刷新适配器
                     notifyItemChanged(getLayoutPosition());
+
+                    //重新显示总价格
+                    showTotalPrice();
                 }
             });
         }
