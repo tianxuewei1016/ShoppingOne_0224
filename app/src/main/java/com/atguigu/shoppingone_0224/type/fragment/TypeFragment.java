@@ -34,7 +34,7 @@ public class TypeFragment extends BaseFragment {
     FrameLayout flType;
 
     private String[] titles = {"分类", "标签"};
-    private ArrayList<BaseFragment>fragments;
+    private ArrayList<BaseFragment> fragments;
     private Fragment tempFragment;
 
     @Override
