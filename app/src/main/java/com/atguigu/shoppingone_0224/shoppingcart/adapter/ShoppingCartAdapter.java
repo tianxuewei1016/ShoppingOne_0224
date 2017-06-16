@@ -9,8 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.atguigu.shoppingone_0224.R;
+import com.atguigu.shoppingone_0224.activity.MyApplication;
 import com.atguigu.shoppingone_0224.home.bean.GoodsBean;
 import com.atguigu.shoppingone_0224.shoppingcart.utils.CartStorage;
+import com.atguigu.shoppingone_0224.shoppingcart.view.AddSubView;
 import com.atguigu.shoppingone_0224.utils.Constants;
 import com.bumptech.glide.Glide;
 
@@ -76,7 +78,7 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         //1.更加位置得到数据
-        GoodsBean goodsBean = datas.get(position);
+        final GoodsBean goodsBean = datas.get(position);
         //2.绑定数据
         holder.cbGov.setChecked(goodsBean.isChecked());
         //图片
@@ -88,27 +90,37 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         holder.AddSubView.setValue(goodsBean.getNumber());
         holder.AddSubView.setMinValue(1);
         holder.AddSubView.setMaxValue(20);
+
+        holder.AddSubView.setOnNumberChangeListener(new AddSubView.OnNumberChangeListener() {
+            @Override
+            public void numberChange(int number) {
+                //把Bean对象更新一下
+                goodsBean.setNumber(number);
+                //更新存储到本地或者服务器上
+                CartStorage.getInstance(MyApplication.getContext()).updateData(goodsBean);
+            }
+        });
     }
 
     public void checkAll_none(boolean checked) {
-        if(datas!=null&&datas.size()>0) {
+        if (datas != null && datas.size() > 0) {
             int number = 0;
-            for (int i=0;i<datas.size();i++){
+            for (int i = 0; i < datas.size(); i++) {
                 GoodsBean goodsBean = datas.get(i);
                 //只要有一个不选中就设置非全选
                 goodsBean.setChecked(checked);
                 notifyItemChanged(i);
             }
-        }else{
+        } else {
             checkboxAll.setChecked(false);
         }
     }
 
     public void deleteData() {
-        if(datas!=null&&datas.size()>0) {
-            for (int i=0;i<datas.size();i++){
+        if (datas != null && datas.size() > 0) {
+            for (int i = 0; i < datas.size(); i++) {
                 GoodsBean goodsBean = datas.get(i);
-                if(goodsBean.isChecked()) {
+                if (goodsBean.isChecked()) {
                     datas.remove(goodsBean);
                     //同步到本地
                     CartStorage.getInstance(mContext).deleteData(goodsBean);
@@ -157,22 +169,22 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
      * 校验是否全选
      */
     public void checkAll() {
-        if(datas!=null&&datas.size()>0) {
+        if (datas != null && datas.size() > 0) {
             int number = 0;
-            for (int i =0;i<datas.size();i++){
+            for (int i = 0; i < datas.size(); i++) {
                 GoodsBean goodsBean = datas.get(i);
-                if(!goodsBean.isChecked()) {
+                if (!goodsBean.isChecked()) {
                     cbAll.setChecked(false);
                     checkboxAll.setChecked(false);
-                }else{
+                } else {
                     number++;
                 }
             }
-            if(number==datas.size()) {
+            if (number == datas.size()) {
                 cbAll.setChecked(true);
                 checkboxAll.setChecked(true);
             }
-        }else{
+        } else {
             //没有数据
             cbAll.setChecked(false);
             checkboxAll.setChecked(false);
