@@ -1,5 +1,6 @@
 package com.atguigu.shoppingone_0224.activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -166,7 +167,10 @@ public class GoodsInfoActivity extends AppCompatActivity {
                 Toast.makeText(this, "收藏", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tv_good_info_cart:
-                Toast.makeText(this, "跳转到购物车", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "跳转到购物车", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(GoodsInfoActivity.this,MainActivity.class);
+                intent.putExtra("checkid",R.id.rb_cart);
+                startActivity(intent);
                 break;
             case R.id.btn_good_info_addcart:
 //                Toast.makeText(this, "添加到购物车", Toast.LENGTH_SHORT).show();
