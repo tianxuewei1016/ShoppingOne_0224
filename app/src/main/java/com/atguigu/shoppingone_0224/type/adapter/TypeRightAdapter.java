@@ -1,15 +1,27 @@
 package com.atguigu.shoppingone_0224.type.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.atguigu.shoppingone_0224.R;
+import com.atguigu.shoppingone_0224.activity.GoodsInfoActivity;
+import com.atguigu.shoppingone_0224.home.adapter.HomeAdapter;
+import com.atguigu.shoppingone_0224.home.bean.GoodsBean;
 import com.atguigu.shoppingone_0224.type.bean.TypeBean;
+import com.atguigu.shoppingone_0224.utils.Constants;
+import com.atguigu.shoppingone_0224.utils.DensityUtil;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -26,6 +38,7 @@ public class TypeRightAdapter extends RecyclerView.Adapter {
     private final Context mContext;
     private final List<TypeBean.ResultEntity.ChildEntity> child;
     private final List<TypeBean.ResultEntity.HotProductListEntity> hot_product_list;
+
 
     private LayoutInflater inflater;
     /**
@@ -57,13 +70,15 @@ public class TypeRightAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return 1;
+        return 1 + child.size();
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == HOT) {
             return new HotViewHolder(inflater.inflate(R.layout.item_hot_right, null));
+        } else if (viewType == COMMON) {
+            return new CommonViewHolder(inflater.inflate(R.layout.item_common_right, null));
         }
         return null;
     }
@@ -73,6 +88,10 @@ public class TypeRightAdapter extends RecyclerView.Adapter {
         if (getItemViewType(position) == HOT) {
             HotViewHolder viewHolder = (HotViewHolder) holder;
             viewHolder.setData(hot_product_list);
+        } else {
+            int realPostion = position - 1;
+            CommonViewHolder commonViewHolder = (CommonViewHolder) holder;
+            commonViewHolder.setData(child.get(realPostion));
         }
     }
 
@@ -89,20 +108,98 @@ public class TypeRightAdapter extends RecyclerView.Adapter {
 
         /**
          * 传入集合
+         *
          * @param hot_product_list
          */
-        public void setData(List<TypeBean.ResultEntity.HotProductListEntity> hot_product_list) {
-            for (int i=0;i<hot_product_list.size();i++){
+        public void setData(final List<TypeBean.ResultEntity.HotProductListEntity> hot_product_list) {
+            for (int i = 0; i < hot_product_list.size(); i++) {
 
                 //创建线性布局
+                TypeBean.ResultEntity.HotProductListEntity listBean = hot_product_list.get(i);
 
-                //创建图片,斌贴切添加到线性布局
+                final LinearLayout myLinear = new LinearLayout(mContext);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-2, -2);
+                params.setMargins(DensityUtil.dip2px(mContext, 5), 0, DensityUtil.dip2px(mContext, 5), DensityUtil.dip2px(mContext, 20));
+                //竖直方向
+                myLinear.setOrientation(LinearLayout.VERTICAL);
+                //居中对齐
+                myLinear.setGravity(Gravity.CENTER);
+                //要注意，根据tag取数据
+                myLinear.setTag(i);
+
+                //创建图片，设置图片，并且添加到线性布局
+                ImageView imageView = new ImageView(mContext);
+                LinearLayout.LayoutParams ivParams = new LinearLayout.LayoutParams(DensityUtil.dip2px(mContext, 80), DensityUtil.dip2px(mContext, 80));
+                ivParams.setMargins(0, 0, 0, DensityUtil.dip2px(mContext, 10));
+                //请求图片
+                Glide.with(mContext).load(Constants.BASE_URL_IMAGE + listBean.getFigure()).into(imageView);
+                myLinear.addView(imageView, ivParams);
 
                 //创建文本,设置文本信息,并且添加到线性布局
+                LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                TextView textView = new TextView(mContext);
+                textView.setGravity(Gravity.CENTER);
+                textView.setTextColor(Color.parseColor("#ed3f3f"));
+                textView.setText("￥" + listBean.getCover_price());
+                myLinear.addView(textView, tvParams);
 
                 //要把当前的线性布局添加到外面的线性不居中
+                llHotRight.addView(myLinear, params);
 
+                //设置点击时间
+                myLinear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) myLinear.getTag();
+//                        TypeBean.ResultEntity.HotProductListEntity hotProductListBean = hot_product_list.get(position);
+//                        Toast.makeText(mContext, "name=" + hotProductListBean.getName() + "," + hotProductListBean.getCover_price(), Toast.LENGTH_SHORT).show();
+                        String cover_price = hot_product_list.get(position).getCover_price();
+                        String name = hot_product_list.get(position).getName();
+                        String figure = hot_product_list.get(position).getFigure();
+                        String product_id = hot_product_list.get(position).getProduct_id();
+                        GoodsBean goodsBean = new GoodsBean();
+                        goodsBean.setProduct_id(product_id);
+                        goodsBean.setFigure(figure);
+                        goodsBean.setCover_price(cover_price);
+                        goodsBean.setName(name);
+
+                        Intent intent = new Intent(mContext, GoodsInfoActivity.class);
+                        intent.putExtra(HomeAdapter.GOODS_BEAN, goodsBean);
+                        mContext.startActivity(intent);
+                    }
+                });
             }
+        }
+    }
+
+    class CommonViewHolder extends RecyclerView.ViewHolder {
+        @InjectView(R.id.iv_ordinary_right)
+        ImageView ivOrdinaryRight;
+        @InjectView(R.id.tv_ordinary_right)
+        TextView tvOrdinaryRight;
+        @InjectView(R.id.ll_root)
+        LinearLayout llRoot;
+
+        public CommonViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.inject(this, itemView);
+        }
+
+        public void setData(final TypeBean.ResultEntity.ChildEntity childEntity) {
+            //设置图片
+            Glide.with(mContext).load(Constants.BASE_URL_IMAGE + childEntity.getPic()).placeholder(R.drawable.new_img_loading_2)
+                    .error(R.drawable.new_img_loading_2).into(ivOrdinaryRight);
+
+            //设置名称
+            tvOrdinaryRight.setText(childEntity.getName());
+            //设置点击事件
+            llRoot.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, "name==" + childEntity.getName(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }
