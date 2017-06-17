@@ -1,12 +1,20 @@
 package com.atguigu.shoppingone_0224.community.fragment;
 
-import android.graphics.Color;
-import android.util.Log;
-import android.view.Gravity;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ImageButton;
 
+import com.atguigu.shoppingone_0224.R;
+import com.atguigu.shoppingone_0224.activity.MainActivity;
 import com.atguigu.shoppingone_0224.base.BaseFragment;
+import com.atguigu.shoppingone_0224.community.adapter.CommunityViewPagerAdapter;
+
+import java.util.ArrayList;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * 作者：田学伟 on 2017/6/11 15:16
@@ -15,15 +23,25 @@ import com.atguigu.shoppingone_0224.base.BaseFragment;
  */
 
 public class CommunityFragment extends BaseFragment {
-    private TextView textView;
+
+
+    @InjectView(R.id.ib_community_icon)
+    ImageButton ibCommunityIcon;
+    @InjectView(R.id.ib_community_message)
+    ImageButton ibCommunityMessage;
+    @InjectView(R.id.tablayout)
+    TabLayout tablayout;
+    @InjectView(R.id.view_pager)
+    ViewPager viewPager;
+
+    private ArrayList<BaseFragment> fragments;
+    private CommunityViewPagerAdapter pagerAdapter;
 
     @Override
     public View initView() {
-        textView = new TextView(mContext);
-        textView.setTextSize(20);
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextColor(Color.RED);
-        return textView;
+        View rootView = View.inflate(mContext, R.layout.fragment_community, null);
+        ButterKnife.inject(this, rootView);
+        return rootView;
     }
 
     /**
@@ -33,7 +51,31 @@ public class CommunityFragment extends BaseFragment {
     @Override
     public void initData() {
         super.initData();
-        Log.e("TAG", "发现的数据被初始化了...");
-        textView.setText("发现内容");
+        fragments = new ArrayList<>();
+        fragments.add(new NewPostFragment());
+        fragments.add(new HotPostFragment());
+
+        MainActivity mainActivity = (MainActivity) mContext;
+        //设置适配器
+        pagerAdapter = new CommunityViewPagerAdapter(mainActivity.getSupportFragmentManager(), fragments);
+        viewPager.setAdapter(pagerAdapter);
+
+        tablayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
+    @OnClick({R.id.ib_community_icon, R.id.ib_community_message})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.ib_community_icon:
+                break;
+            case R.id.ib_community_message:
+                break;
+        }
     }
 }
