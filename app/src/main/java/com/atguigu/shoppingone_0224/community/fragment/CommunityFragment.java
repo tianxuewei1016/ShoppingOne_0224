@@ -4,6 +4,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.atguigu.shoppingone_0224.R;
 import com.atguigu.shoppingone_0224.activity.MainActivity;
@@ -73,8 +74,10 @@ public class CommunityFragment extends BaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.ib_community_icon:
+                Toast.makeText(mContext, "图片", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.ib_community_message:
+                Toast.makeText(mContext, "消息", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
