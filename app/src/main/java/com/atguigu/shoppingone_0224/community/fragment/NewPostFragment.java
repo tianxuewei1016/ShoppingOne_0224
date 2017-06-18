@@ -7,6 +7,7 @@ import android.widget.ListView;
 import com.alibaba.fastjson.JSON;
 import com.atguigu.shoppingone_0224.R;
 import com.atguigu.shoppingone_0224.base.BaseFragment;
+import com.atguigu.shoppingone_0224.community.adapter.NewPostListViewAdapter;
 import com.atguigu.shoppingone_0224.community.bean.NewPostBean;
 import com.atguigu.shoppingone_0224.utils.Constants;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -27,7 +28,7 @@ public class NewPostFragment extends BaseFragment {
     private static final String TAG = NewPostFragment.class.getSimpleName();
     @InjectView(R.id.lv_new_post)
     ListView lvNewPost;
-
+    private NewPostListViewAdapter adapter;
     /**
      * 初始化控件
      * retur
@@ -70,6 +71,8 @@ public class NewPostFragment extends BaseFragment {
 
     private void processData(String json) {
         NewPostBean newPostBean = JSON.parseObject(json,NewPostBean.class);
+        adapter = new NewPostListViewAdapter(mContext,newPostBean.getResult());
+        lvNewPost.setAdapter(adapter);
     }
 
     @Override
